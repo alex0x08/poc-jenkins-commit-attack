@@ -1,0 +1,4 @@
+ls -la
+set
+uname -a
+

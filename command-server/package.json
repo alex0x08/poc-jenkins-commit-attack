@@ -1,0 +1,14 @@
+{
+  "name": "test-command-server",
+  "version": "1.0.0",
+  "description": "PoC Command Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Alex",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

